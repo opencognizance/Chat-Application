@@ -18,9 +18,30 @@ public class Client implements Runnable{
             client = new Socket("127.0.0.1", 9999);
             out = new PrintWriter(client.getOutputStream(), true);
             in = new BufferedReader(new InputStreamReader(System.in));
+            InputHandler inputHandler = new InputHandler();
+            Thread t = new Thread();
+            t.start();
+
+            String inMessage;
+            while((inMessage = in.readLine())!=null){
+                System.out.println(inMessage);
+            }
         } catch (IOException e) {
-            //TODO
+            shutDown();
         }
+    }
+
+    public void shutDown(){
+         done = true;
+         try{
+             in.close();
+             out.close();
+             if(!client.isClosed()){
+                 client.close();
+             }
+         }catch (Exception e){
+             //Ignore
+         }
     }
 
     class InputHandler implements Runnable{
@@ -32,11 +53,22 @@ public class Client implements Runnable{
                          (new InputStreamReader(System.in));
 
                  while(!done){
-
+                     String message = inReader.readLine();
+                     if(message.equalsIgnoreCase("Quit")){
+                         in.close();
+                         shutDown();
+                     }else{
+                         out.println(message);
+                     }
                  }
              }catch (Exception e){
-                 //TODO
+                 shutDown();
              }
         }
+    }
+
+    public static void main(String[] args) {
+        Client client = new Client();
+        client.run();
     }
 }
