@@ -15,11 +15,11 @@ public class Client implements Runnable{
     @Override
     public void run() {
         try {
-            client = new Socket("127.0.0.1", 9999);
+            Socket client = new Socket("127.0.0.1", 9999);
             out = new PrintWriter(client.getOutputStream(), true);
             in = new BufferedReader(new InputStreamReader(System.in));
             InputHandler inputHandler = new InputHandler();
-            Thread t = new Thread();
+            Thread t = new Thread(inputHandler);
             t.start();
 
             String inMessage;
